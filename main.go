@@ -27,7 +27,15 @@ func getAllGames(w http.ResponseWriter, r *http.Request) {
 }
 
 func getGame(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	params := mux.Vars(r)
+	for _, item := range games {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode(item)
+			break
+		}
+	}
 }
 
 func createGame(w http.ResponseWriter, r *http.Request) {
