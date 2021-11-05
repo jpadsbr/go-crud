@@ -15,7 +15,6 @@ type Game struct {
 }
 
 type Character struct {
-	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -39,25 +38,41 @@ func deleteGame(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
-
 	for index, item := range games {
 		if item.ID == params["id"] {
-			json.NewEncoder(w).Encode("Game deleted successfully")
 			games = append(games[:index], games[index+1:]...)
 			break
 		}
 	}
+
+	json.NewEncoder(w).Encode("Game deleted successfully")
 }
 
 func updateGame(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	params := mux.Vars(r)
+	for index, item := range games {
+		if item.ID == params["id"] {
+			games = append(games[:index], games[index+1:]...)
+
+			var game Game
+			_ = json.NewDecoder(r.Body).Decode(&game)
+			game.ID = item.ID
+
+			games = append(games, game)
+			break
+		}
+	}
+
+	json.NewEncoder(w).Encode("Game updated successfully")
 }
 
 func main() {
 	r := mux.NewRouter()
 
-	games = append(games, Game{ID: "1", Name: "God of War", MainCharacter: &Character{ID: "1", Name: "Kratos"}})
-	games = append(games, Game{ID: "2", Name: "The Last of Us", MainCharacter: &Character{ID: "2", Name: "Joel"}})
+	games = append(games, Game{ID: "1", Name: "God of War", MainCharacter: &Character{Name: "Kratos"}})
+	games = append(games, Game{ID: "2", Name: "The Last of Us", MainCharacter: &Character{Name: "Joel"}})
 
 	r.HandleFunc("/games", getAllGames).Methods("GET")
 	r.HandleFunc("/games/{id}", getGame).Methods("GET")
