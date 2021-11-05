@@ -1,4 +1,4 @@
-module go-crud
+module github.com/jpadsbr/go-crud
 
 go 1.17
 

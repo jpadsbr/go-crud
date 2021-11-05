@@ -23,6 +23,7 @@ var games []Game
 
 func getAllGames(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	json.NewEncoder(w).Encode(games)
 }
 
@@ -35,7 +36,17 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteGame(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	params := mux.Vars(r)
+
+	for index, item := range games {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode("Game deleted successfully")
+			games = append(games[:index], games[index+1:]...)
+			break
+		}
+	}
 }
 
 func updateGame(w http.ResponseWriter, r *http.Request) {
