@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -39,7 +41,15 @@ func getGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func createGame(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	var game Game
+	_ = json.NewDecoder(r.Body).Decode(&game)
+	game.ID = strconv.Itoa(rand.Intn(1000000))
+
+	games = append(games, game)
+
+	json.NewEncoder(w).Encode("Game created sucessfully")
 }
 
 func deleteGame(w http.ResponseWriter, r *http.Request) {
